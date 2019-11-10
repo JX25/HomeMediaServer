@@ -1,20 +1,33 @@
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+require('dotenv').config({path: 'env/dev.env'});
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 
-var indexRouter = require('./routes/index');
+
+const bodyParser = require('body-parser');
 
 
-var app = express();
+const app = express();
+
 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
-app.use('/', indexRouter);
+// DATABASE
+const mongoose = require('mongoose');
+mongoose.connect(process.env.DB_ADDR, {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.set('useCreateIndex', true);
+const dataBase = mongoose.connection;
+dataBase.on('error', (error) => console.error(error));
+dataBase.once('open', () => console.log('Connected to DataBase'));
+// ROUTERS
+const indexRouter = require('./routes/index');
+const userRouter = require('./routes/UserRoute');
+app.use('/api/v1', indexRouter);
+app.use('/api/v1/user', userRouter);
 
 
 module.exports = app;
