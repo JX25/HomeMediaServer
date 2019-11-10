@@ -1,8 +1,8 @@
-import '../utils/middlewareUtil';
+const middlewareUtil = require('../utils/middlewareUtil');
 
 module.exports = (req, res, next) => {
     try{
-        req.userData = decodeToken(req)
+        req.userData = middlewareUtil.decodeToken(req)
         //console.log(decoded);
         next();
     } catch(error){
