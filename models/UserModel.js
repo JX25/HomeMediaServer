@@ -5,7 +5,8 @@ let UserSchema = new Schema({
     nickname : {
         type: String,
         required: true,
-        unique: true},
+        unique: true
+    },
     email : {
         index: true,
         type: String,
@@ -30,6 +31,10 @@ let UserSchema = new Schema({
     modified_date: {
         type: Date,
         required: true
+    },
+    age_rate: {
+        type: String,
+        enum: ["KID", "TN", "AD"]
     }
 });
 
