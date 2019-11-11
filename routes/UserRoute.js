@@ -12,6 +12,7 @@ router.delete('/nick/:nickname', userController.deleteUser);
 router.get('/all', userController.getUsers);
 router.patch('/password/:nickname', userController.resetPasswordByAdmin);
 router.post('/admin', userController.addAdmin);
+router.post('/login', userController.login);
 
 
 module.exports = router;

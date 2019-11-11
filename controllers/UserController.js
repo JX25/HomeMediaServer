@@ -1,6 +1,8 @@
 const userUtil = require('../utils/userUtil');
 const User = require('../models/UserModel');
+//const Session = require('../models/SessionModel');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 exports.test = (req, res) => {
     res.status(200).json({
@@ -8,9 +10,10 @@ exports.test = (req, res) => {
     })
 };
 
-exports.createUser = (req, res, is_admin=false) => {
+exports.createUser = (req, res, is_admin) => {
+    if(is_admin != true) is_admin = false;
     User.find({
-        email: req.body.email
+        nickname: req.body.nickname
     }).exec()
       .then(user => {
             if (user.length >= 1){
@@ -121,4 +124,45 @@ exports.resetPasswordByAdmin = (req, res) => {
 
 exports.addAdmin = (req, res) => {
     this.createUser(req, res, true);
+};
+
+exports.login = (req, res) => {
+    User.findOne({nickname: req.body.nickname})
+        .exec()
+        .then(user =>{
+            if(user != null){
+                bcrypt.compare(req.body.password, user.password, (err, result) =>{
+                    if(err) {
+                        return userUtil.res(res, 401, "Authorization failed");
+                    }
+                    if(result){
+                        const token = jwt.sign({
+                                email: user.email,
+                                id: user._id,
+                                password: user.password
+                            },
+                            process.env.SECRET,
+                            {
+                                expiresIn: "2h"
+                            });
+                        //let session = new Session(token,new Date.now());
+                        return userUtil.res(res, 200,{
+                            message: "Authorization successful",
+                            token: token,
+                            type: user.is_admin
+                        });
+                    }
+                    return userUtil.res(res, 401, "Authorization failed");
+                })
+            }else{
+                return userUtil.res(res, 404, "Cannot login");
+            }
+        })
+        .catch(error =>{
+            return userUtil.res(res, 500, error);
+        })
+};
+
+exports.logout = (req, res) => {
+
 };
