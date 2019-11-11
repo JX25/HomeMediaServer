@@ -140,3 +140,12 @@ exports.distinctValues = (req, res) => {
           movieUtil.res(res, 500, "Cannot download distinct categories");
       })
 };
+
+exports.streamMovie = (req, res) =>{
+    let mediaToStream = process.env.MOVIE_PATH+req.params.slug;
+    try{
+        movieUtil.streamMedia(res, mediaToStream);
+    }catch(error){
+        movieUtil.res(res, 500, "Error during streaming movie");
+    }
+};

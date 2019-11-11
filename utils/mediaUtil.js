@@ -29,6 +29,19 @@ exports.removeMedia = (filepath) =>{
     });
 };
 
+//V1 - nie mozna manipulowac czasem
+/*exports.streamMedia = (response, filePath) =>{
+    response.writeHead(200, {'Content-Type': 'video/mp4'});
+    const streaming = fs.createReadStream(filePath);
+    streaming.pipe(response);
+};*/
+exports.streamMedia = (response, filePath) =>{
+    response.writeHead(200, {'Content-Type': 'video/mp4'});
+    const streaming = fs.createReadStream(filePath);
+    streaming.pipe(response);
+};
+
+
 
 exports.getPeopleIds = (people) => {
     this.addToCollection(people, People);
