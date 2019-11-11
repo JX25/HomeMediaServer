@@ -16,12 +16,14 @@ let MovieSchema = new Schema({
         max: 2100,
     },
     genre:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'MovieGenre'
+        type: String,
+        //type: mongoose.Schema.Types.ObjectId,
+        //ref: 'MovieGenre'
     },
     tags:[{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Tag'
+        type: String,
+        //type: mongoose.Schema.Types.ObjectId,
+        //ref: 'Tag'
     }],
     language:{
         type: String
@@ -43,13 +45,15 @@ let MovieSchema = new Schema({
         type: String,
         enum: ['KID','TN','AD']
     },
-    director:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'People'
-    },
+    director:[{
+        type: String,
+        //type: mongoose.Schema.Types.ObjectId,
+        //ref: 'People'
+    }],
     actors:[{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'People'
+        type: String,
+        //type: mongoose.Schema.Types.ObjectId,
+        //ref: 'People'
     }],
 });
 
