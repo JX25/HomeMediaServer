@@ -42,8 +42,8 @@ let MovieSchema = new Schema({
         minimum: 0
     },
     age_rate:{
-        type: String,
-        enum: ['KID','TN','AD']
+        type: Number,
+        enum: [0, 1, 2]
     },
     director:[{
         type: String,
@@ -55,6 +55,10 @@ let MovieSchema = new Schema({
         //type: mongoose.Schema.Types.ObjectId,
         //ref: 'People'
     }],
+    created: {
+        type: Date,
+        required: true
+    }
 });
 
 module.exports = mongoose.model("Movie", MovieSchema);

@@ -33,8 +33,8 @@ let UserSchema = new Schema({
         required: true
     },
     age_rate: {
-        type: String,
-        enum: ["KID", "TN", "AD"]
+        type: Number,
+        enum: [0, 1, 2]
     }
 });
 
