@@ -129,6 +129,19 @@ exports.allMovies = (req, res) => {
         })
 };
 
+exports.allMoviesAgeRate = (req, res) => {
+    let ageRate = 'from_token'
+    Movie.find({age_rate: {$lte: ageRate} })
+        .exec()
+        .then(movies =>{
+            movieUtil.res(res, 200, movies);
+        })
+        .catch(error =>{
+            console.log(error);
+            movieUtil.res(res, 500, "Cannot download movies - Error");
+        })
+};
+
 exports.distinctValues = (req, res) => {
   Movie.distinct(req.params.field)
       .exec()
