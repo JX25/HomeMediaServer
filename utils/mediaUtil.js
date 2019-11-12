@@ -37,7 +37,7 @@ exports.removeMedia = (filepath) =>{
 };*/
 exports.streamMedia = (response, filePath) =>{
     response.writeHead(200, {'Content-Type': 'video/mp4'});
-    const streaming = fs.createReadStream(filePath);
+    const streaming = fs.createReadStream(filePath, {highWaterMark: 1024 * 10});
     streaming.pipe(response);
 };
 
