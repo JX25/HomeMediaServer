@@ -43,7 +43,7 @@ exports.createMovie = (req, res) => {
             }
         })
         .catch(error =>{
-            movieUtil.res(res, 500, 'asdsaas' + error);
+            movieUtil.res(res, 500, 'Error while searching for Movie ' + error);
         })
 };
 
@@ -53,7 +53,7 @@ exports.uploadMovie = (req, res) =>{
         .then(movie =>{
             if(movie.length === 1){
                 let file = process.env.MOVIE_PATH + req.params.slug;
-                movieUtil.upload(req, res, file)
+                movieUtil.upload(req, res, file);
             }else{
                 movieUtil.res(res, 409, "Existing two or more movies with same slug");
             }
@@ -87,7 +87,7 @@ exports.updateMovie = (req, res) => {
     Movie.updateOne({slug: req.params.slug}, {$set: toUpdate})
         .exec()
         .then(() =>{
-            movieUtil.res(res, 200, "Movie updated");
+            movieUtil.res(res, 200, "Movie data updated");
         })
         .catch(error => {
             movieUtil.res(res, 500, error);
@@ -103,13 +103,13 @@ exports.deleteMovie = (req, res) => {
                 movie[0].delete()
                     .then(() =>{
                         movieUtil.removeMedia(toDelete);
-                        return movieUtil.res(res, 200, "Movie deleted from DB and storage")
+                        movieUtil.res(res, 200, "Movie deleted from DB and storage")
                     })
                     .catch(error =>{
-                        return movieUtil.res(res, 500, "Error during deleting movie")
+                        movieUtil.res(res, 500, "Error during deleting movie")
                     })
             }else{
-                return movieUtil.res(res, 404, "Cannot find movie to delete");
+                movieUtil.res(res, 404, "Cannot find movie to delete");
             }
         })
         .catch(error => {
@@ -161,4 +161,20 @@ exports.streamMovie = (req, res) =>{
     }catch(error){
         movieUtil.res(res, 500, "Error during streaming movie");
     }
+};
+
+exports.getMoviesWithParameters = (req, res) =>{
+    let parameters = req.body.parameters;
+    Movie.find({parameters})
+        .exec()
+        .then(movies => {
+            if(movies.length > 0){
+                movieUtil.res(res, 200, photos);
+            }else{
+                movieUtil.res(res, 404, "No movie to fulfil criteria");
+            }
+        })
+        .catch(error =>{
+            movieUtil.res(res, 500, "Internal Error" + error);
+        })
 };

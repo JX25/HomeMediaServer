@@ -31,9 +31,13 @@ dataBase.once('open', () => console.log('Connected to DataBase'));
 const indexRouter = require('./routes/index');
 const userRouter = require('./routes/UserRoute');
 const movieRouter = require('./routes/MovieRoute');
+const photoRouter = require('./routes/PhotoRoute');
+const musicRouter = require('./routes/MusicRoute');
 app.use('/api/v1', indexRouter);
 app.use('/api/v1/user', userRouter);
 app.use('/api/v1/movie', movieRouter);
+app.use('/api/v1/photo', photoRouter);
+app.use('/api/v1/music', musicRouter);
 
 
 module.exports = app;
