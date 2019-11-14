@@ -35,10 +35,32 @@ exports.removeMedia = (filepath) =>{
     const streaming = fs.createReadStream(filePath);
     streaming.pipe(response);
 };*/
-exports.streamMedia = (response, filePath) =>{
-    response.writeHead(200, {'Content-Type': 'video/mp4'});
-    const streaming = fs.createReadStream(filePath, {highWaterMark: 1024 * 10});
-    streaming.pipe(response);
+exports.streamMedia = (response, request, filePath) =>{
+    let fileStats = fs.statSync(filePath);
+    const fileSize = fileStats.size;
+    const range = request.headers.range;
+    const toStream = fs.createReadStream(filePath, {highWaterMark: 1024 * 1024 * 2});
+    if(range){
+        const parts = range.replace(/bytes=/, "").split("-");
+        const start = parseInt(parts[0], 10);
+        const end = parts[1] ? parseInt(parts[1], 10) : fileSize-1;
+        const chunkSize = (end - start)+1;
+        const headers = {
+            'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+            'Accept-Ranges': 'bytes',
+            'Content-Length': chunkSize,
+            'Content-Type': 'video/mp4',
+        };
+        response.writeHead(206, headers);
+        toStream.pipe(response);
+    }else {
+        const headers = {
+            'Content-Length': fileSize,
+            'Content-Type': 'video/mp4'
+        };
+        response.writeHead(200, headers);
+        toStream.pipe(response);
+    }
 };
 
 

@@ -157,7 +157,7 @@ exports.distinctValues = (req, res) => {
 exports.streamMovie = (req, res) =>{
     let mediaToStream = process.env.MOVIE_PATH+req.params.slug;
     try{
-        movieUtil.streamMedia(res, mediaToStream);
+        movieUtil.streamMedia(res, req, mediaToStream);
     }catch(error){
         movieUtil.res(res, 500, "Error during streaming movie");
     }
