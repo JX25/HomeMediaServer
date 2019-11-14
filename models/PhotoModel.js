@@ -12,8 +12,8 @@ let PhotoSchema = new Schema({
         required: true,
     },
     tags : [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Tag'
+        type: String //mongoose.Schema.Types.ObjectId,
+        //ref: 'Tag'
     }],
     slug : {
         type: String,
@@ -28,12 +28,14 @@ let PhotoSchema = new Schema({
     width : {
         type: Number,
         multipleOf: 1.0,
+        min: 1,
         required: true,
         unique: true,
     },
     height : {
         type: Number,
         multipleOf: 1.0,
+        min: 1,
         required: true,
         unique: true,
     },

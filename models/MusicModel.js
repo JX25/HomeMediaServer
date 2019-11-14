@@ -4,15 +4,16 @@ const Schema = mongoose.Schema;
 let MusicSchema = new Schema({
     title : {
         type: String,
-        required: true,
-        unique: true,
+        required: true
     },
     description :{
     type: String,
     },
     author:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'People'
+        type: String,
+        required: true
+        //type: mongoose.Schema.Types.ObjectId,
+        //ref: 'People'
     },
     album:{
         type: String
@@ -21,17 +22,16 @@ let MusicSchema = new Schema({
         type: Number,
         min: 0,
         max: 2100,
+        required: true
     },
     genre:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'MusicGenre'
+        type: String,
     },
     tags:[{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Tag'
+        type: String,
     }],
     language:{
-        type: String
+        type: String,
     },
     slug:{
         type: String,
