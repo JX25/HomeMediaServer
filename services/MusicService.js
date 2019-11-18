@@ -128,10 +128,10 @@ exports.allMusic = (req, res) => {
 };
 
 exports.allMusicAgeRate = (req, res) =>{
-    let ageRate = 'from_token';
+    let ageRate = req.userData.age;
     Music.find({age_rate: {$lte: ageRate}})
         .exec()
-        .then(movies => {
+        .then( music => {
             musicUtil.res(res, 200, music);
         })
         .catch(error =>{
@@ -155,7 +155,7 @@ exports.distinctValues = (req, res) => {
   exports.streamMusic = (req, res) =>{
       let mediaToStream = process.env.MUSIC_PATH+req.params.slug;
       try{
-          musicUtil.streamMedia(res, mediaToStream);
+          musicUtil.streamMedia(res, req, mediaToStream, 'audio/mpeg');
       }catch(error){
           musicUtil.res(res, 500, "Error during streaming music");
       }

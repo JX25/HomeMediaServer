@@ -8,7 +8,7 @@ exports.test = (req, res) => {
     })
 };
 
-exports.createPhoto = (res, req) => {
+exports.createPhoto = (req, res) => {
     Photo.find({title: req.body.title})
         .exec()
         .then(photo =>{
@@ -20,7 +20,7 @@ exports.createPhoto = (res, req) => {
                     slug: slug(req.body.title + req.body.timestamp),
                     file_path: process.env.PHOTO_PATH + slug(req.body.title + req.body.timestamp),
                     width: req.body.width,
-                    height: req.height.height,
+                    height: req.body.height,
                     description: req.body.description
                 });
                 newPhoto.save()
@@ -39,7 +39,7 @@ exports.createPhoto = (res, req) => {
         })
 };
 
-exports.uploadPhoto = (res, req) =>{
+exports.uploadPhoto = (req, res) =>{
     Photo.find({slug: req.params.slug})
         .exec()
         .then(photo =>{
@@ -79,14 +79,14 @@ exports.updatePhoto = (req, res) => {
     Photo.updateOne({slug: req.params.slug}, {$set: toUpdate})
         .exec()
         .then(() =>{
-            movieUtil.res(res, 200, "Photo data updated");
+            photoUtil.res(res, 200, "Photo data updated");
         })
         .catch(error => {
-            movieUtil.res(res, 500, error);
+            photoUtil.res(res, 500, error);
         })
 };
 
-exports.deletePhoto = () => {
+exports.deletePhoto = (req, res) => {
     Photo.find({slug: req.params.slug})
         .exec()
         .then(photo =>{
@@ -95,10 +95,10 @@ exports.deletePhoto = () => {
                 photo[0].delete()
                     .then(() =>{
                         photoUtil.removeMedia(toDelete);
-                        return movieUtil.res(res, 200, "Photo deleted from DB and storage")
+                        return photoUtil.res(res, 200, "Photo deleted from DB and storage");
                     })
                     .catch(error =>{
-                        return photoUtil.res(res, 500, "Error during deleting photo")
+                        return photoUtil.res(res, 500, "Error during deleting photo " + error);
                     })
             }else{
                 return photoUtil.res(res, 404, "Cannot find photo to delete");
@@ -109,7 +109,7 @@ exports.deletePhoto = () => {
         })
 };
 
-exports.allPhotos = () => {
+exports.allPhotos = (req, res) => {
     Photo.find()
         .exec()
         .then(photos =>{
@@ -136,7 +136,7 @@ exports.distinctValues = (req, res) => {
   exports.streamPhoto = (req, res) =>{
     let mediaToStream = process.env.PHOTO_PATH+req.params.slug;
     try{
-        photoUtil.streamMedia(res, mediaToStream);
+        photoUtil.streamMedia(res, req, mediaToStream, 'image/jpeg');
     }catch(error){
         photoUtil.res(res, 500, "Error during streaming photo");
     }

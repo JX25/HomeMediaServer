@@ -8,7 +8,7 @@ router.patch('/upload/:slug', musicController.upload);
 router.get('/:slug/detail', musicController.getOne);
 router.get('/all', musicController.getAll);
 router.get('/stream/:slug', musicController.stream);
-router.put('/:slug/detail', musicController.update);
+router.put('/:slug', musicController.update);
 router.delete('/:slug', musicController.delete);
 router.get('/field-unique/:field', musicController.getValueOf);
 router.get('/with-age-rate/all', musicController.getAllAgeRate);

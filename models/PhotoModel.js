@@ -8,8 +8,9 @@ let PhotoSchema = new Schema({
         unique: true,
     },
     timestamp : {
-        type: Date,
-        required: true,
+        type: Number,
+        min: 10000000000000,
+        max: 99999999999999,
     },
     tags : [{
         type: String //mongoose.Schema.Types.ObjectId,

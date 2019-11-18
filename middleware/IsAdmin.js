@@ -11,7 +11,7 @@ module.exports = (req, res, next) => {
             .exec()
             .then(user=>{
                 if(user.length === 1){
-                    next();
+                    return;//next();
                 } else {
                     return middlewareUtil.unauthorized(res, 401, "Admin authorization failed")
                 }

@@ -27,6 +27,7 @@ exports.createMovie = (req, res) => {
                     age_rate: req.body.age_rate,
                     director: req.body.director,
                     actors: req.body.actors,
+                    created: Date.now()
                 });
                 newMovie.save()
                     .then( () => {
@@ -128,7 +129,7 @@ exports.allMovies = (req, res) => {
 };
 
 exports.allMoviesAgeRate =  async (req, res) => {
-    let ageRate = 'from_token'
+    let ageRate = req.userData.age;
     Movie.find({age_rate: {$lte: ageRate} })
         .exec()
         .then(movies =>{
@@ -155,7 +156,7 @@ exports.distinctValues = (req, res) => {
 exports.streamMovie = (req, res) =>{
     let mediaToStream = process.env.MOVIE_PATH+req.params.slug;
     try{
-        movieUtil.streamMedia(res, req, mediaToStream);
+        movieUtil.streamMedia(res, req, mediaToStream , 'video/mp4');
     }catch(error){
         movieUtil.res(res, 500, "Error during streaming movie");
     }
