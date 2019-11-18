@@ -1,17 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const checkAuthAdmin = require('../middleware/IsAdmin');
-const checkAuthUser = require('../middleware/IsUser');
 const userController = require('../controllers/UserController');
 
 router.get('/test', userController.test);
-router.post('/', userController.createUser);
-router.get('/nick/:nickname', userController.getUser);
-router.patch('/nick/:nickname', userController.updateUser);
-router.delete('/nick/:nickname', userController.deleteUser);
-router.get('/all', userController.getUsers);
-router.patch('/password/:nickname', userController.resetPasswordByAdmin);
-router.post('/admin', userController.addAdmin);
+router.post('/', userController.create);
+router.get('/nick/:nickname', userController.getOne);
+router.patch('/nick/:nickname', userController.update);
+router.delete('/nick/:nickname', userController.delete);
+router.get('/all', userController.getAll);
+router.patch('/password/:nickname', userController.ressetPassword);
+router.post('/admin', userController.createAdmin);
 router.post('/login', userController.login);
 
 

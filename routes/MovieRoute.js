@@ -1,18 +1,18 @@
 const express = require('express');
 const router = express.Router();
-const checkAuthAdmin = require('../middleware/IsAdmin');
-const checkAuthUser = require('../middleware/IsUser');
 const movieController = require('../controllers/MovieController');
 
 router.get('/test', movieController.test);
-router.post('/', movieController.createMovie);
-router.patch('/upload/:slug', movieController.uploadMovie);
-router.get('/:slug/detail', movieController.getMovie);
-router.get('/all', movieController.allMovies);
-router.get('/watch/:slug', movieController.streamMovie);
-router.put('/:slug/detail', movieController.allMovies);
-router.delete('/:slug', movieController.deleteMovie);
-router.get('/field-unique/:field', movieController.distinctValues);
+router.post('/', movieController.create);
+router.patch('/upload/:slug', movieController.upload);
+router.get('/:slug/detail', movieController.getOne);
+router.get('/all', movieController.getAll);
+router.get('/stream/:slug', movieController.stream);
+router.put('/:slug/detail', movieController.update);
+router.delete('/:slug', movieController.delete);
+router.get('/field-unique/:field', movieController.getValueOf);
+router.get('/with-age-rate/all', movieController.getAllAgeRate);
+router.get('/search/', movieController.filterAll);
 
 
 
