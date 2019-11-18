@@ -5,14 +5,14 @@ const checkAuthUser = require('../middleware/IsUser');
 const photoController = require('../controllers/PhotoController');
 
 router.get('/test', photoController.test);
-router.post('/', photoController.createPhoto);
-router.patch('/upload/:slug', photoController.uploadPhoto);
-router.get('/:slug/detail', photoController.getPhoto);
-router.get('/all', photoController.allPhotos);
-router.get('/watch/:slug', photoController.streamPhoto);
-router.put('/:slug/detail', photoController.allPhotos);
-router.delete('/:slug', photoController.deletePhoto);
-router.get('/field-unique/:field', photoController.distinctValues);
-router.get('/find/', photoController.getPhotosWithParameters);
+router.post('/', photoController.create);
+router.patch('/upload/:slug', photoController.upload);
+router.get('/:slug/detail', photoController.getOne);
+router.get('/all', photoController.getAll);
+router.get('/stream/:slug', photoController.stream);
+router.put('/:slug/detail', photoController.update);
+router.delete('/:slug', photoController.delete);
+router.get('/field-unique/:field', photoController.getValueOf);
+router.get('/search/', photoController.filterAll);
 
 module.exports = router;
