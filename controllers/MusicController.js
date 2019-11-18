@@ -50,6 +50,7 @@ exports.stream = async (request, response) =>{
 };
 
 exports.filterAll = async (request, response) =>{
+    isAuthorized(request, response);
     await MusicService.getMusicWithParameters(request, response);
 };
 

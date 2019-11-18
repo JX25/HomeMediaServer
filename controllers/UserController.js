@@ -20,6 +20,11 @@ exports.update = async (request, response) => {
     await UserService.updateUser(request, response);
 };
 
+exports.delete = async (request, response) => {
+    isAuthorized(request, response);
+    await UserService.deleteUser(request, response);
+};
+
 exports.getAll = async (request, response) => {
     isAdministrator(request, response);
     await UserService.getUsers(request, response);

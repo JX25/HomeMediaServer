@@ -1,4 +1,5 @@
 const MovieService = require("../services/MovieService");
+const MovieUtil = require("../utils/mediaUtil");
 const isAuthorized = require("../middleware/IsUser");
 const isAdministrator = require("../middleware/IsAdmin");
 
@@ -13,6 +14,7 @@ exports.create = async (request, response) => {
 
 exports.upload = async (request, response) => {
     isAdministrator(request, response);
+    MovieUtil.checkFreeSpace(request, response, process.env.MOVIE_PATH, request.headers['Content-Length']);
     await MovieService.uploadMovie(request, response);
 };
 
