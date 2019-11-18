@@ -1,7 +1,3 @@
-const upload = require("express-fileupload");
-const People = require('../models/PeopleModel');
-const Genre = require('../models/MovieGenreModel');
-const Tag = require('../models/TagModel');
 const fs = require('fs');
 
 exports.res = (response, code, message) =>{
@@ -16,7 +12,7 @@ exports.upload = ( req, res, filepath) =>{
         let fstream = fs.createWriteStream(filepath);
         file.pipe(fstream);
         fstream.on('close', () =>{
-            this.res(res, 200, "Movie uploaded");
+            this.res(res, 200, "Media file uploaded");
         });
     });
 };
@@ -35,11 +31,11 @@ exports.removeMedia = (filepath) =>{
     const streaming = fs.createReadStream(filePath);
     streaming.pipe(response);
 };*/
+/*V2 Możliwość manipulacji czasem*/
 exports.streamMedia = (response, request, filePath) =>{
-    let fileStats = fs.statSync(filePath);
+    const fileStats = fs.statSync(filePath);
     const fileSize = fileStats.size;
     const range = request.headers.range;
-    const toStream = fs.createReadStream(filePath, {highWaterMark: 1024 * 1024 * 2});
     if(range){
         const parts = range.replace(/bytes=/, "").split("-");
         const start = parseInt(parts[0], 10);
@@ -52,53 +48,15 @@ exports.streamMedia = (response, request, filePath) =>{
             'Content-Type': 'video/mp4',
         };
         response.writeHead(206, headers);
+        const toStream = fs.createReadStream(filePath, {highWaterMark: 1024 * 1024 * 2, start: start, end: end});
         toStream.pipe(response);
     }else {
         const headers = {
-            'Content-Length': fileSize,
+            'Content-Length': fileSize-1,
             'Content-Type': 'video/mp4'
         };
         response.writeHead(200, headers);
+        const toStream = fs.createReadStream(filePath, {highWaterMark: 1024 * 1024 * 2});
         toStream.pipe(response);
-    }
-};
-
-
-
-exports.getPeopleIds = (people) => {
-    this.addToCollection(people, People);
-    People.find()
-        .exec()
-        .then(allPeople =>{
-            let list = [];
-            for(let person of allPeople){
-                if(people.indexOf(person.name) != -1){
-                    list.push(person._id);
-                }
-            }
-            console.log(list);
-            return list;
-        })
-        .catch(error =>{
-            console.log(error);
-        })
-};
-
-exports.getTagsIds = (tags) => {
-
-};
-
-exports.getGenresIds = (genre) => {
-
-};
-
-exports.addToCollection = (names, Model) =>{
-    for(let n of names){
-        let obj = new Model({name: n});
-        try {
-            obj.save();
-        }catch(error){
-            console.log(error);
-        }
     }
 };
