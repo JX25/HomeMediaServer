@@ -11,7 +11,7 @@ exports.test = (req, res) => {
 };
 
 exports.createUser = (req, res, is_admin) => {
-    if(is_admin != true) is_admin = false;
+    if(is_admin !== true) is_admin = false;
     User.find({
         nickname: req.body.nickname
     }).exec()
@@ -106,7 +106,7 @@ exports.getUsers = (req, res, is_admin=false) => {
 
 exports.resetPasswordByAdmin = (req, res) => {
     let nickname = req.params.nickname;
-    let password = "NewPassword1234";
+    let password = req.body.newPassword;
     bcrypt.hash(password,12, (err, hash)=> {
         let toUpdate = {}
         toUpdate['modified_date'] = Date.now();

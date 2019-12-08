@@ -4,12 +4,17 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const busboy = require('connect-busboy');
-
+const cors = require('cors');
 const bodyParser = require('body-parser');
 
 
 const app = express();
-
+app.use(cors());
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 
 app.use(logger('dev'));
 app.use(express.json());
