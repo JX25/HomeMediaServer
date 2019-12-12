@@ -23,6 +23,7 @@ exports.createMovie = (req, res) => {
                     language: req.body.language,
                     slug: slug(req.body.title+'_'+req.body.year),
                     file_path: process.env.MOVIE_PATH + slug(req.body.title+'_'+req.body.year),
+                    thumbnail: process.env.MOVIE_THUMBNAILS + slug(req.body.title+'_'+req.body.year),
                     length: req.body.length,
                     age_rate: req.body.age_rate,
                     director: req.body.director,
@@ -59,6 +60,22 @@ exports.uploadMovie = (req, res) =>{
         })
         .catch(error =>{
             movieUtil.res(res, 404, "Problem with movie");
+        })
+};
+
+exports.uploadThumbnail = (req, res) => {
+    Movie.find({slug: req.params.slug})
+        .exec()
+        .then(movie =>{
+            if(movie.length === 1){
+                let file = process.env.MOVIE_THUMBNAILS + req.params.slug;
+                movieUtil.upload(req, res, file);
+            }else{
+                movieUtil.res(res, 409, "Existing two or more movies with same thumbnail");
+            }
+        })
+        .catch(error =>{
+            movieUtil.res(res, 404, "Problem with movie", {err: error});
         })
 };
 
@@ -157,6 +174,15 @@ exports.streamMovie = (req, res) =>{
     let mediaToStream = process.env.MOVIE_PATH+req.params.slug;
     try{
         movieUtil.streamMedia(res, req, mediaToStream , 'video/mp4');
+    }catch(error){
+        movieUtil.res(res, 500, "Error during streaming movie");
+    }
+};
+
+exports.streamThumbnail = (req, res) =>{
+    let mediaToStream = process.env.MOVIE_THUMBNAILS+req.params.slug;
+    try{
+        movieUtil.streamMedia(res, req, mediaToStream , 'image/*');
     }catch(error){
         movieUtil.res(res, 500, "Error during streaming movie");
     }

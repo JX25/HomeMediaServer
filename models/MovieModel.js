@@ -33,6 +33,9 @@ let MovieSchema = new Schema({
         unique: true,
         required: true
     },
+    thumbnail:{
+      type: String
+    },
     file_path:{
         type: String,
         required: true

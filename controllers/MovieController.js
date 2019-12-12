@@ -52,9 +52,19 @@ exports.stream = async (request, response) => {
     await MovieService.streamMovie(request, response);
 };
 
+exports.streamThumbnail = async (request, response) => {
+    //isAuthorized(request, response);
+    await MovieService.streamThumbnail(request, response);
+};
+
 exports.filterAll = async (request, response) => {
     isAuthorized(request, response);
     await MovieService.getMoviesWithParameters(request, response);
+};
+
+exports.thumbnail = async (request, response) => {
+    isAdministrator(request, response);
+    await MovieService.uploadThumbnail(request, response)
 };
 
 
