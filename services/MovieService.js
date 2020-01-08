@@ -100,10 +100,23 @@ exports.updateMovie = (req, res) => {
     for(let param in req.body){
         toUpdate[param] = req.body[param];
     }
-    Movie.updateOne({slug: req.params.slug}, {$set: toUpdate})
+    toUpdate[slug] = req.body[slug];
+    toUpdate['file_path'] = process.env.MOVIE_PATH + req.body['slug'];
+    toUpdate['thumbnail'] = process.env.MOVIE_THUMBNAILS + req.body['slug'];
+    Movie.updateOne({slug: toUpdate['OLDslug']}, {$set: toUpdate})
         .exec()
         .then(() =>{
-            movieUtil.res(res, 200, "Movie data updated");
+            let result = [];
+            if(req.body.OLDslug != req.body.slug){
+                try{
+                    result.push(movieUtil.renameMedia(process.env.MOVIE_THUMBNAILS + req.body.OLDslug, process.env.MOVIE_THUMBNAILS + req.body.slug));
+                    result.push(movieUtil.renameMedia(process.env.MOVIE_PATH + req.body.OLDslug, process.env.MOVIE_PATH + req.body.slug));
+                }catch(err){
+                    console.log(err)
+                }
+            }
+            result.push('Movie data updated');
+            movieUtil.res(res, 200, result);
         })
         .catch(error => {
             movieUtil.res(res, 500, error);
@@ -115,10 +128,12 @@ exports.deleteMovie = (req, res) => {
         .exec()
         .then(movie =>{
             if(movie.length === 1){
-                let toDelete = movie[0].file_path;
+                let toDelete = Array(movie[0].file_path,movie[0].thumbnail);
                 movie[0].delete()
                     .then(() =>{
-                        movieUtil.removeMedia(toDelete);
+                        for(let file of toDelete){
+                            movieUtil.removeMedia(file);
+                        }
                         movieUtil.res(res, 200, "Movie deleted from DB and storage")
                     })
                     .catch(error =>{

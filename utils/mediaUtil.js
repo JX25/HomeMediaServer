@@ -39,6 +39,19 @@ exports.removeMedia = (filepath) =>{
     });
 };
 
+exports.renameMedia = (oldPath, newPath ) => {
+    if(!fs.existsSync(oldPath)){
+        return "File does not exist";
+    }
+    fs.rename(oldPath, newPath, (err) => {
+        if(err){
+            console.log(err);
+            return "Cannot delete media file";
+        }
+    });
+    return "New path to media file: " + newPath;
+};
+
 //V1 - nie mozna manipulowac czasem
 /*exports.streamMedia = (response, filePath) =>{
     response.writeHead(200, {'Content-Type': 'video/mp4'});
