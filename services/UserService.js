@@ -160,6 +160,7 @@ exports.login = (req, res) => {
             }
         })
         .catch(error =>{
+            console.log(error);
             return userUtil.res(res, 500, error);
         })
 };

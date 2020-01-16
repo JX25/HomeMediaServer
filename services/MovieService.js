@@ -115,7 +115,7 @@ exports.updateMovie = (req, res) => {
                     console.log(err)
                 }
             }
-            result.push('Movie data updated');
+            result.push('Movie meta data updated');
             movieUtil.res(res, 200, result);
         })
         .catch(error => {
@@ -137,7 +137,7 @@ exports.deleteMovie = (req, res) => {
                         movieUtil.res(res, 200, "Movie deleted from DB and storage")
                     })
                     .catch(error =>{
-                        movieUtil.res(res, 500, "Error during deleting movie")
+                        movieUtil.res(res, 500, "Error during deleting movie", {err: error})
                     })
             }else{
                 movieUtil.res(res, 404, "Cannot find movie to delete");

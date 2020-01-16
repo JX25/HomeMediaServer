@@ -34,7 +34,8 @@ let MovieSchema = new Schema({
         required: true
     },
     thumbnail:{
-      type: String
+        type: String,
+        required: true
     },
     file_path:{
         type: String,

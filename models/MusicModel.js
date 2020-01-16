@@ -12,8 +12,6 @@ let MusicSchema = new Schema({
     author:{
         type: String,
         required: true
-        //type: mongoose.Schema.Types.ObjectId,
-        //ref: 'People'
     },
     album:{
         type: String
@@ -38,6 +36,10 @@ let MusicSchema = new Schema({
         unique: true,
         required: true
     },
+    thumbnail: {
+        type: String,
+        required: true
+    },
     file_path:{
         type: String,
         required: true
@@ -49,6 +51,10 @@ let MusicSchema = new Schema({
     age_rate:{
         type: Number,
         enum: [0, 1, 2]
+    },
+    created: {
+        type: Date,
+        required: true
     }
 });
 

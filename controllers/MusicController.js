@@ -1,4 +1,5 @@
 const MusicService = require("../services/MusicService");
+const MusicUtil = require("../utils/mediaUtil");
 const isAuthorized = require("../middleware/IsUser");
 const isAdministrator = require("../middleware/IsAdmin");
 
@@ -13,10 +14,12 @@ exports.create = async (request, response) =>{
 
 exports.upload = async (request, response) =>{
     isAdministrator(request, response);
+    MusicUtil.checkFreeSpace(request, response, process.env.MUSIC_PATH, request.headers['Content-Length']);
     await MusicService.uploadMusic(request, response);
 };
 
 exports.getOne = async (request, response) =>{
+    isAuthorized(request, response);
     await MusicService.getMusic(request, response);
 };
 
@@ -49,8 +52,17 @@ exports.stream = async (request, response) =>{
     await MusicService.streamMusic(request, response);
 };
 
+exports.streamThumbnail = async (request, response) => {
+    //isAuthorized(request, response);
+    await MusicService.streamThumbnail(request, response);
+};
+
 exports.filterAll = async (request, response) =>{
     isAuthorized(request, response);
     await MusicService.getMusicWithParameters(request, response);
 };
 
+exports.thumbnail = async (request, response) => {
+    isAdministrator(request, response);
+    await MusicService.uploadThumbnail(request, response)
+};
