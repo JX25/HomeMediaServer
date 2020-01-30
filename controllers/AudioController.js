@@ -1,68 +1,68 @@
-const MusicService = require("../services/MusicService");
-const MusicUtil = require("../utils/mediaUtil");
+const AudioService = require("../services/AudioService");
+const AudioUtil = require("../utils/mediaUtil");
 const isAuthorized = require("../middleware/IsUser");
 const isAdministrator = require("../middleware/IsAdmin");
 
 exports.test = async (request, response) =>{
-    await MusicService.test(request, response);
+    await AudioService.test(request, response);
 };
 
 exports.create = async (request, response) =>{
     isAdministrator(request, response);
-    await MusicService.createMusic(request, response);
+    await AudioService.createAudio(request, response);
 };
 
 exports.upload = async (request, response) =>{
     isAdministrator(request, response);
-    MusicUtil.checkFreeSpace(request, response, process.env.MUSIC_PATH, request.headers['Content-Length']);
-    await MusicService.uploadMusic(request, response);
+    AudioUtil.checkFreeSpace(request, response, process.env.AUDIO_PATH, request.headers['Content-Length']);
+    await AudioService.uploadAudio(request, response);
 };
 
 exports.getOne = async (request, response) =>{
     isAuthorized(request, response);
-    await MusicService.getMusic(request, response);
+    await AudioService.getAudio(request, response);
 };
 
 exports.update = async (request, response) =>{
     isAdministrator(request, response);
-    await MusicService.updateMusic(request, response);
+    await AudioService.updateAudio(request, response);
 };
 
 exports.delete = async (request, response) =>{
     isAdministrator(request, response);
-    await MusicService.deleteMusic(request, response);
+    await AudioService.deleteAudio(request, response);
 };
 
 exports.getAll = async (request, response) =>{
     isAuthorized(request, response);
-    await MusicService.allMusic(request, response);
+    await AudioService.allAudio(request, response);
 };
 
 exports.getAllAgeRate = async (request, response) =>{
     isAuthorized(request, response);
-    await MusicService.allMusicAgeRate(request, response);
+    await AudioService.allAudioAgeRate(request, response);
 };
 
 exports.getValueOf = async (request, response) =>{
-    await MusicService.distinctValues(request, response);
+    await AudioService.distinctValues(request, response);
 };
 
 exports.stream = async (request, response) =>{
     //isAuthorized(request, response);
-    await MusicService.streamMusic(request, response);
+    await AudioService.streamAudio(request, response);
 };
 
 exports.streamThumbnail = async (request, response) => {
     //isAuthorized(request, response);
-    await MusicService.streamThumbnail(request, response);
+    await AudioService.streamThumbnail(request, response);
 };
 
 exports.filterAll = async (request, response) =>{
     isAuthorized(request, response);
-    await MusicService.getMusicWithParameters(request, response);
+    await AudioService.getAudioWithParameters(request, response);
 };
 
 exports.thumbnail = async (request, response) => {
     isAdministrator(request, response);
-    await MusicService.uploadThumbnail(request, response)
+    await AudioService.uploadThumbnail(request, response)
 };

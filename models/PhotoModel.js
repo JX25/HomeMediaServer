@@ -12,6 +12,9 @@ let PhotoSchema = new Schema({
         min: 10000000000000,
         max: 99999999999999,
     },
+    collections: [{
+        type: String,
+    }],
     tags : [{
         type: String //mongoose.Schema.Types.ObjectId,
         //ref: 'Tag'
@@ -22,6 +25,11 @@ let PhotoSchema = new Schema({
         unique: true,
     },
     file_path : {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    thumbnail : {
         type: String,
         required: true,
         unique: true,

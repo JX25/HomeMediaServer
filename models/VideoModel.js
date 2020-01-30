@@ -1,42 +1,39 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-let MusicSchema = new Schema({
+let VideoSchema = new Schema({
     title : {
         type: String,
-        required: true
+        required: true,
+        unique: true,
     },
     description :{
-    type: String,
-    },
-    author:{
         type: String,
-        required: true
-    },
-    album:{
-        type: String
     },
     year:{
         type: Number,
         min: 0,
         max: 2100,
-        required: true
     },
     genre:{
         type: String,
+        //type: mongoose.Schema.Types.ObjectId,
+        //ref: 'VideoGenre'
     },
     tags:[{
         type: String,
+        //type: mongoose.Schema.Types.ObjectId,
+        //ref: 'Tag'
     }],
     language:{
-        type: String,
+        type: String
     },
     slug:{
         type: String,
         unique: true,
         required: true
     },
-    thumbnail: {
+    thumbnail:{
         type: String,
         required: true
     },
@@ -52,10 +49,20 @@ let MusicSchema = new Schema({
         type: Number,
         enum: [0, 1, 2]
     },
+    director:[{
+        type: String,
+        //type: mongoose.Schema.Types.ObjectId,
+        //ref: 'People'
+    }],
+    actors:[{
+        type: String,
+        //type: mongoose.Schema.Types.ObjectId,
+        //ref: 'People'
+    }],
     created: {
         type: Date,
         required: true
     }
 });
 
-module.exports = mongoose.model("Music", MusicSchema);
+module.exports = mongoose.model("Video", VideoSchema);
