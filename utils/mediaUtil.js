@@ -63,27 +63,31 @@ exports.streamMedia = (response, request, filePath, contentType) =>{
     const fileStats = fs.statSync(filePath);
     const fileSize = fileStats.size;
     const range = request.headers.range;
-    if(range){
-        const parts = range.replace(/bytes=/, "").split("-");
-        const start = parseInt(parts[0], 10);
-        const end = parts[1] ? parseInt(parts[1], 10) : fileSize-1;
-        const chunkSize = (end - start)+1;
-        const headers = {
-            'Content-Range': `bytes ${start}-${end}/${fileSize}`,
-            'Accept-Ranges': 'bytes',
-            'Content-Length': chunkSize,
-            'Content-Type': contentType,
-        };
-        response.writeHead(206, headers);
-        const toStream = fs.createReadStream(filePath, {highWaterMark: 1024 * 1024 * 2, start: start, end: end});
-        toStream.pipe(response);
-    }else {
-        const headers = {
-            'Content-Length': fileSize-1,
-            'Content-Type': contentType
-        };
-        response.writeHead(200, headers);
-        const toStream = fs.createReadStream(filePath, {highWaterMark: 1024 * 1024 * 2});
-        toStream.pipe(response);
+    try {
+        if (range) {
+            const parts = range.replace(/bytes=/, "").split("-");
+            const start = parseInt(parts[0], 10);
+            const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+            const chunkSize = (end - start) + 1;
+            const headers = {
+                'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+                'Accept-Ranges': 'bytes',
+                'Content-Length': chunkSize,
+                'Content-Type': contentType,
+            };
+            response.writeHead(206, headers);
+            const toStream = fs.createReadStream(filePath, {highWaterMark: 1024 * 1024 * 2, start: start, end: end});
+            toStream.pipe(response);
+        } else {
+            const headers = {
+                'Content-Length': fileSize - 1,
+                'Content-Type': contentType
+            };
+            response.writeHead(200, headers);
+            const toStream = fs.createReadStream(filePath, {highWaterMark: 1024 * 1024 * 2});
+            toStream.pipe(response);
+        }
+    }catch(error){
+        console.log(error)
     }
 };

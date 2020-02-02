@@ -209,7 +209,7 @@ exports.getVideosWithParameters = (req, res) =>{
         .exec()
         .then(videos => {
             if(videos.length > 0){
-                videoUtil.res(res, 200, photos);
+                videoUtil.res(res, 200, videos);
             }else{
                 videoUtil.res(res, 404, "No video to fulfil criteria");
             }

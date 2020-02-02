@@ -10,11 +10,11 @@ exports.test = (req, res) => {
 };
 
 exports.createAudio = (req, res) => {
-    Audio.find({title: req.body.title, year: req.body.year, author: req.body.author})
+    Audio.find({title: req.body.title, year: req.body.year, album: req.body.album})
     .exec()
     .then(audio =>{
         if(audio.length === 0){
-            let thumbnailSlug = slug(req.body.author+'_'+req.body.album+'_'+req.body.year);
+            let newSlug = slug(req.body.title+'_'+req.body.year+'_'+req.body.album)
             let newAudio = new Audio({
                 title: req.body.title,
                 description: req.body.description,
@@ -24,16 +24,16 @@ exports.createAudio = (req, res) => {
                 genre: req.body.genre,
                 tags: req.body.tags,
                 language: req.body.language,
-                slug: slug(req.body.title+'_'+req.body.year+'_'+req.body.author),
-                file_path: process.env.AUDIO_PATH + slug(req.body.title+'_'+req.body.year),
-                thumbnail: process.env.AUDIO_THUMBNAILS + thumbnailSlug,
+                slug: newSlug,
+                file_path: process.env.AUDIO_PATH + newSlug,
+                thumbnail: process.env.AUDIO_THUMBNAILS + newSlug,
                 length: req.body.length,
                 age_rate: req.body.age_rate,
                 created: Date.now()
             });
             newAudio.save()
                 .then( () => {
-                    audioUtil.res(res, 201, {msg: "Created Meta Data for Audio", slg: newAudio.slug, thmb: thumbnailSlug});
+                    audioUtil.res(res, 201, {msg: "Created Meta Data for Audio", slg: newAudio.slug, thmb: newSlug});
                 })
                 .catch(error =>{
                     console.log(error);
@@ -110,8 +110,8 @@ exports.updateAudio = (req, res) => {
             let result = [];
             if(req.body.OLDslug != req.body.slug){
                 try{
-                    result.push(videoUtil.renameMedia(process.env.VIDEO_THUMBNAILS + req.body.OLDslug, process.env.VIDEO_THUMBNAILS + req.body.slug));
-                    result.push(videoUtil.renameMedia(process.env.VIDEO_PATH + req.body.OLDslug, process.env.VIDEO_PATH + req.body.slug));
+                    result.push(audioUtil.renameMedia(process.env.AUDIO_THUMBNAILS + req.body.OLDslug, process.env.AUDIO_THUMBNAILS + req.body.slug));
+                    result.push(audioUtil.renameMedia(process.env.AUDIO_PATH + req.body.OLDslug, process.env.AUDIO_PATH + req.body.slug));
                 }catch(err){
                     console.log(err)
                 }
@@ -210,7 +210,7 @@ exports.streamThumbnail = (req, res) =>{
           .exec()
           .then(audio => {
               if(audio.length > 0){
-                  audioUtil.res(res, 200, photos);
+                  audioUtil.res(res, 200, audio);
               }else{
                 audioUtil.res(res, 404, "No audio to fulfil criteria");
               }
