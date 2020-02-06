@@ -36,12 +36,12 @@ dataBase.once('open', () => console.log('Connected to DataBase'));
 const indexRouter = require('./routes/index');
 const userRouter = require('./routes/UserRoute');
 const videoRouter = require('./routes/VideoRoute');
-const photoRouter = require('./routes/PhotoRoute');
+const imageRouter = require('./routes/ImageRoute');
 const audioRouter = require('./routes/AudioRoute');
 app.use('/api/v1', indexRouter);
 app.use('/api/v1/user', userRouter);
 app.use('/api/v1/video', videoRouter);
-app.use('/api/v1/photo', photoRouter);
+app.use('/api/v1/image', imageRouter);
 app.use('/api/v1/audio', audioRouter);
 
 
