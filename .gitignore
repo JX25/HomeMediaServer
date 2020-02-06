@@ -4,3 +4,4 @@ porty.txt
 .idea
 *.env
 uploads
+bin/certs
