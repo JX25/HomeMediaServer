@@ -1,7 +1,7 @@
 const Image = require('../models/ImageModel');
 const imageUtil = require('../utils/mediaUtil');
 const slug = require('slug');
-
+const sharp = require('sharp');
 exports.test = (req, res) => {
     res.status(200).json({
         info: "Image Controller is working!"
@@ -9,16 +9,19 @@ exports.test = (req, res) => {
 };
 
 exports.createImage = (req, res) => {
-    Image.find({title: req.body.title})
+    Image.find({title: req.body.title, timestamp: req.body.timestamp})
         .exec()
         .then(image =>{
             if(image.length === 0){
+                let newSlug = slug(req.body.title + "_" + req.body.timestamp);
                 let newImage = new Image({
                     title: req.body.title,
                     timestamp: req.body.timestamp,
                     tags: req.body.tags,
-                    slug: slug(req.body.title + req.body.timestamp),
-                    file_path: process.env.PHOTO_PATH + slug(req.body.title + req.body.timestamp),
+                    collections: req.body.collection,
+                    slug: newSlug,
+                    file_path: process.env.PHOTO_PATH + newSlug,
+                    thumbnail_path: process.env.PHOTO_THUMBNAILS + newSlug,
                     width: req.body.width,
                     height: req.body.height,
                     description: req.body.description
@@ -28,13 +31,15 @@ exports.createImage = (req, res) => {
                         imageUtil.res(res, 201, {msg: "Created Meta Data for Image", slg: newImage.slug});
                     })
                     .catch(error =>{
-                        imageUtil.res(res, 500, "Error while creating metadata for image");
+                        console.log(error)
+                        imageUtil.res(res, 500, "Error while creating metadata for image " + error);
                     })
             }else{
                 imageUtil.res(res, 409, "Image with this title aleready exist");
             }
         })
         .catch(error =>{
+            console.log(error);
             imageUtil.res(res, 500, "Error while searching image DB" + error);
         })
 };
