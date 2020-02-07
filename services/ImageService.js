@@ -20,8 +20,7 @@ exports.createImage = (req, res) => {
                     tags: req.body.tags,
                     collections: req.body.collection,
                     slug: newSlug,
-                    file_path: process.env.PHOTO_PATH + newSlug,
-                    thumbnail_path: process.env.PHOTO_THUMBNAILS + newSlug,
+                    file_path: process.env.IMAGE_PATH + newSlug,
                     width: req.body.width,
                     height: req.body.height,
                     description: req.body.description
@@ -49,7 +48,7 @@ exports.uploadImage = (req, res) =>{
         .exec()
         .then(image =>{
             if(image.length === 1){
-                let file = process.env.PHOTO_PATH + req.params.slug;
+                let file = process.env.IMAGE_PATH + req.params.slug;
                 imageUtil.upload(req, res, file);
             }else{
                 imageUtil.res(res, 409, "Existing two or more images with same slug");
@@ -139,9 +138,9 @@ exports.distinctValues = (req, res) => {
   };
 
   exports.streamImage = (req, res) =>{
-    let mediaToStream = process.env.PHOTO_PATH+req.params.slug;
+    let mediaToStream = process.env.IMAGE_PATH+req.params.slug;
     try{
-        imageUtil.streamMedia(res, req, mediaToStream, 'image/jpeg');
+        imageUtil.streamMedia(res, req, mediaToStream, 'image/*');
     }catch(error){
         imageUtil.res(res, 500, "Error during streaming image");
     }

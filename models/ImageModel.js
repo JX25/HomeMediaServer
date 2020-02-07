@@ -26,11 +26,6 @@ let ImageSchema = new Schema({
         required: true,
         unique: true
     },
-    thumbnail_path : {
-        type: String,
-        required: true,
-        unique: true
-    },
     width : {
         type: Number,
         required: true
