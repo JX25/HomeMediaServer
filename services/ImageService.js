@@ -21,9 +21,11 @@ exports.createImage = (req, res) => {
                     collections: req.body.collection,
                     slug: newSlug,
                     file_path: process.env.IMAGE_PATH + newSlug,
+                    thumbnail_path: process.env.IMAGE_THUMBNAILS + newSlug,
                     width: req.body.width,
                     height: req.body.height,
-                    description: req.body.description
+                    description: req.body.description,
+                    age_rate: req.body.age_rate,
                 });
                 newImage.save()
                     .then( () =>{
@@ -43,19 +45,25 @@ exports.createImage = (req, res) => {
         })
 };
 
-exports.uploadImage = (req, res) =>{
+exports.uploadImage = async (req, res, next) =>{
     Image.find({slug: req.params.slug})
         .exec()
         .then(image =>{
             if(image.length === 1){
                 let file = process.env.IMAGE_PATH + req.params.slug;
                 imageUtil.upload(req, res, file);
+                try{
+                    imageUtil.removeMedia(process.env.IMAGE_THUMBNAILS + req.params.slug)
+                    this.createImageThumbnail(req.params.slug)
+                }catch(err){
+                    console.log(err)
+                }
             }else{
                 imageUtil.res(res, 409, "Existing two or more images with same slug");
             }
         })
         .catch(error =>{
-            imageUtil(res, 500, "Problem with image" + error)
+            imageUtil.res(res, 500, "Problem with image" + error)
         })
 };
 
@@ -80,10 +88,22 @@ exports.updateImage = (req, res) => {
     for(let param in req.body){
         toUpdate[param] = req.body[param];
     }
-    Image.updateOne({slug: req.params.slug}, {$set: toUpdate})
+    toUpdate["thumbnail_path"] = process.env.IMAGE_THUMBNAILS + toUpdate["slug"];
+    toUpdate["file_path"] = process.env.IMAGE_PATH + toUpdate["slug"];
+    Image.updateOne({slug: toUpdate['OLDslug']}, {$set: toUpdate})
         .exec()
         .then(() =>{
-            imageUtil.res(res, 200, "Image data updated");
+            let result = [];
+            if(req.body.OLDslug != req.body.slug){
+                try{
+                    result.push(imageUtil.renameMedia(process.env.IMAGE_THUMBNAILS + req.body.OLDslug, toUpdate["thumbnail_path"]));
+                    result.push(imageUtil.renameMedia(process.env.IMAGE_PATH + req.body.OLDslug, toUpdate["file_path"] ));
+                }catch(err){
+                    console.log(err)
+                }
+            }
+            result.push('Image meta data updated');
+            imageUtil.res(res, 200, result);
         })
         .catch(error => {
             imageUtil.res(res, 500, error);
@@ -95,10 +115,12 @@ exports.deleteImage = (req, res) => {
         .exec()
         .then(image =>{
             if(image.length === 1){
-                let toDelete = image[0].file_path;
+                let imageDelete = image[0].file_path;
+                let thumbnailDelete = image[0].thumbnail_path;
                 image[0].delete()
                     .then(() =>{
-                        imageUtil.removeMedia(toDelete);
+                        imageUtil.removeMedia(imageDelete);
+                        imageUtil.removeMedia(thumbnailDelete);
                         return imageUtil.res(res, 200, "Image deleted from DB and storage");
                     })
                     .catch(error =>{
@@ -137,12 +159,21 @@ exports.distinctValues = (req, res) => {
         })
   };
 
-  exports.streamImage = (req, res) =>{
+exports.streamImage = (req, res) =>{
     let mediaToStream = process.env.IMAGE_PATH+req.params.slug;
     try{
         imageUtil.streamMedia(res, req, mediaToStream, 'image/*');
     }catch(error){
-        imageUtil.res(res, 500, "Error during streaming image");
+        imageUtil.res(res, 500, "Error during streaming image " + error);
+    }
+};
+
+exports.streamThumbnail = (req, res) =>{
+    let mediaToStream = process.env.IMAGE_THUMBNAILS + req.params.slug;
+    try{
+        imageUtil.streamMedia(res, req, mediaToStream, "image/*")
+    }catch(error){
+        imageUtil.res(res, 500, "Error during streaming image thumbnail " + error)
     }
 };
 
@@ -160,4 +191,18 @@ exports.getImagesWithParameters = (req, res) =>{
         .catch(error =>{
             imageUtil.res(res, 500, "Internal Error" + error);
         })
+};
+
+exports.createImageThumbnail = (fileName) => {
+    let imageFile = process.env.IMAGE_PATH + fileName;
+    sharp(imageFile)
+        .resize(320)
+        .toFile(process.env.IMAGE_THUMBNAILS + fileName, (err) =>{
+            console.log(fileName)
+            if(err){
+                console.log(err)
+            }else{
+                console.log("thumbnail created")
+            }
+        });
 };

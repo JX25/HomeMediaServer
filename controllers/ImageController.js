@@ -44,6 +44,13 @@ exports.stream = async (request, response) => {
     await ImageService.streamImage(request, response);
 };
 
+exports.streamThumbnail = async (request, response) => {
+    await ImageService.streamThumbnail(request, response);
+};
+
+
+
+
 exports.filterAll = async (request, response) => {
     isAuthorized(request, response);
     await ImageService.getImagesWithParameters(request, response);

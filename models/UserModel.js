@@ -35,7 +35,11 @@ let UserSchema = new Schema({
     age_rate: {
         type: Number,
         enum: [0, 1, 2]
-    }
+    },
+    active:{
+        type: Boolean,
+        default: true
+    },
 });
 
 module.exports = mongoose.model("User", UserSchema);

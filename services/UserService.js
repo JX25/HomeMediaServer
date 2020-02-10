@@ -144,7 +144,7 @@ exports.login = (req, res) => {
                             },
                             process.env.SECRET,
                             {
-                                expiresIn: "2h"
+                                expiresIn: "6h"
                             });
                         //let session = new Session(token,new Date.now());
                         return userUtil.res(res, 200,{

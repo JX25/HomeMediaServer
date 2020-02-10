@@ -26,6 +26,11 @@ let ImageSchema = new Schema({
         required: true,
         unique: true
     },
+    thumbnail_path : {
+        type: String,
+        required: true,
+        unique: true
+    },
     width : {
         type: Number,
         required: true
@@ -37,6 +42,10 @@ let ImageSchema = new Schema({
     description : {
         type: String
     },
+    age_rate:{
+        type: Number,
+        enum: [0, 1, 2]
+    }
 });
 
 module.exports = mongoose.model("Image", ImageSchema);

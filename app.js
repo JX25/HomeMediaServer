@@ -38,11 +38,13 @@ const userRouter = require('./routes/UserRoute');
 const videoRouter = require('./routes/VideoRoute');
 const imageRouter = require('./routes/ImageRoute');
 const audioRouter = require('./routes/AudioRoute');
+const serverRouter = require('./routes/ServerRoute');
 app.use('/api/v1', indexRouter);
 app.use('/api/v1/user', userRouter);
 app.use('/api/v1/video', videoRouter);
 app.use('/api/v1/image', imageRouter);
 app.use('/api/v1/audio', audioRouter);
+app.use('/api/v1/server', serverRouter);
 
 
 module.exports = app;

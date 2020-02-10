@@ -1,6 +1,6 @@
 const fs = require('fs');
 const checkDiskSpace = require('check-disk-space');
-
+const sharp = require("sharp");
 exports.res = (response, code, message) =>{
     return response.status(code).json({
         response: message
@@ -20,12 +20,50 @@ exports.checkFreeSpace = (req, res, uploadDir, fileInBytes) => {
 
 exports.upload = ( req, res, filepath) =>{
     req.pipe(req.busboy);
-    console.log('Start uploading at ' + Date.now().toString());
+    let startUpload = Date.now();
+    console.log('Start uploading at ' + startUpload.toString());
     req.busboy.on('file', (fieldname, file, filename) =>{
         let writeStream = fs.createWriteStream(filepath);
         file.pipe(writeStream);
         writeStream.on('close', () =>{
-            console.log('Uploading finished at ' + Date.now().toString());
+            let fileName = filepath.split("/")[filepath.split("/").length-1];
+            if(
+                filepath.includes("video_thumbnails") ||
+                filepath.includes("audio_thumbnails")
+            ){
+                let OUT = '';
+                filepath.includes('audio_thumbnails') ?  OUT = process.env.AUDIO_THUMBNAILS :  OUT = process.env.VIDEO_THUMBNAILS;
+                sharp(OUT+fileName)
+                    .resize(800, 800, {
+                        fit: sharp.fit.inside,
+                        withoutEnlargement: true
+                    })
+                    .toFormat('jpeg')
+                    .toBuffer()
+                    .then(function(outputBuffer) {
+                        fs.writeFileSync(OUT+fileName, outputBuffer, (error) =>{
+                            if(error){
+                                console.log(error);
+                                throw error;
+                            }else{
+                                console.log("image thumbnail has been replaced")
+                            }
+                        })
+                    });
+            }else if(filepath.includes("/images/")){
+                sharp(filepath)
+                    .resize(320).toFile(process.env.IMAGE_THUMBNAILS + fileName, (err) =>{
+                    if(!err){
+                        console.log("thumbnail created")
+                    }else{
+                        console.log(err)
+                    }
+                })
+            }
+            let endTime = Date.now();
+            let uploadTime = (endTime - startUpload)/1000;
+            console.log('Uploading finished at ' + endTime.toString());
+            console.log(filepath+ ' upload time ' + uploadTime.toString() + 's');
             this.res(res, 200, "Media file uploaded");
         });
     });
@@ -35,6 +73,8 @@ exports.removeMedia = (filepath) =>{
     fs.unlink(filepath, (err) =>{
         if(err) {
             console.log(err);
+        }else{
+            console.log("media removed from server")
         }
     });
 };
