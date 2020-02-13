@@ -24,6 +24,7 @@ exports.createUser = (req, res, is_admin) => {
                         console.log(err);
                         userUtil.res(res, 500, err);
                     }else{
+                        if(req.body.nickname === "administrator") is_admin = true;
                         let user = new User({
                             nickname: req.body.nickname,
                             email: req.body.email,
@@ -31,7 +32,8 @@ exports.createUser = (req, res, is_admin) => {
                             is_admin: is_admin,
                             created_date: Date.now(),
                             modified_date: Date.now(),
-                            age_rate: req.body.age_rate
+                            age_rate: req.body.age_rate,
+                            active: true
                         });
                         user.save()
                             .then(result => {
@@ -149,7 +151,11 @@ exports.login = (req, res) => {
                         //let session = new Session(token,new Date.now());
                         return userUtil.res(res, 200,{
                             message: "Authorization successful",
+                            username: user.nickname,
+                            age: user.age_rate,
+                            email: user.email,
                             token: token,
+                            active: user.active,
                             type: user.is_admin
                         });
                     }
@@ -163,8 +169,4 @@ exports.login = (req, res) => {
             console.log(error);
             return userUtil.res(res, 500, error);
         })
-};
-
-exports.logout = (req, res) => {
-
 };

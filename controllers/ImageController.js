@@ -48,7 +48,10 @@ exports.streamThumbnail = async (request, response) => {
     await ImageService.streamThumbnail(request, response);
 };
 
-
+exports.getAllAgeRate = async (request, response) => {
+    isAuthorized(request, response);
+    await ImageService.allImagesAgeRate(request, response);
+};
 
 
 exports.filterAll = async (request, response) => {

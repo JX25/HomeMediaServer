@@ -162,7 +162,7 @@ exports.allAudio = (req, res) => {
 };
 
 exports.allAudioAgeRate = (req, res) =>{
-    let ageRate = req.userData.age;
+    let ageRate = req.params.agerate;
     Audio.find({age_rate: {$lte: ageRate}})
         .exec()
         .then( audio => {

@@ -161,7 +161,7 @@ exports.allVideos = (req, res) => {
 };
 
 exports.allVideosAgeRate =  async (req, res) => {
-    let ageRate = req.userData.age;
+    let ageRate = req.params.agerate;
     Video.find({age_rate: {$lte: ageRate} })
         .exec()
         .then(videos =>{

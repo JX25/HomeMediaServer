@@ -13,7 +13,7 @@ router.get('/stream-thumbnail/:slug', audioController.streamThumbnail);
 router.put('/:slug', audioController.update);
 router.delete('/:slug', audioController.delete);
 router.get('/field-unique/:field', audioController.getValueOf);
-router.get('/with-age-rate/all', audioController.getAllAgeRate);
+router.get('/with-age-rate/all/:agerate', audioController.getAllAgeRate);
 router.get('/find/', audioController.filterAll); //?
 
 module.exports = router;

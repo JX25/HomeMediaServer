@@ -206,3 +206,16 @@ exports.createImageThumbnail = (fileName) => {
             }
         });
 };
+
+exports.allImagesAgeRate = async (req, res) => {
+    let ageRate = req.params.agerate;
+    Image.find({age_rate: {$lte: ageRate}})
+        .exec()
+        .then(images =>{
+            imageUtil.res(res, 200, images)
+        })
+        .catch(error => {
+            console.log(error)
+            imageUtil.res(res, 500, "Cannot download iamges - Error");
+        })
+};

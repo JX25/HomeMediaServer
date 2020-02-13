@@ -13,7 +13,7 @@ router.get('/stream-thumbnail/:slug', videoController.streamThumbnail);
 router.put('/:slug', videoController.update);
 router.delete('/:slug', videoController.delete);
 router.get('/field-unique/:field', videoController.getValueOf);
-router.get('/with-age-rate/all', videoController.getAllAgeRate); //dosspr
+router.get('/with-age-rate/all/:agerate', videoController.getAllAgeRate); //dosspr
 router.get('/search/', videoController.filterAll); //nie dziala
 
 
