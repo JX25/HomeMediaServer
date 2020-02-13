@@ -47,7 +47,9 @@ exports.createUser = (req, res, is_admin) => {
                     }
                 })
             }
-      })
+      }).catch(error => {
+        console.log(error);
+    })
 };
 
 exports.getUser = (req, res) => {
@@ -106,21 +108,33 @@ exports.getUsers = (req, res, is_admin=false) => {
         })
 };
 
-exports.resetPasswordByAdmin = (req, res) => {
+exports.resetPassword = (req, res) => {
     let nickname = req.params.nickname;
-    let password = req.body.newPassword;
-    bcrypt.hash(password,12, (err, hash)=> {
-        let toUpdate = {}
-        toUpdate['modified_date'] = Date.now();
-        toUpdate['password'] = hash;
-        User.updateOne({nickname: nickname}, {$set: toUpdate})
-            .exec()
-            .then(() => {
-                userUtil.res(res, 201, "Password changed");
+    let oldPassword = req.params.oldPassword;
+    let newPassword = req.body.newPassword;
+
+    User.findOne({nickname: nickname}).exec().then(user =>{
+        if(user != null){
+            bcrypt.compare(oldPassword, user.password, (error, result) =>{
+                if(error) return userUtil.res(res, 400, "Password not matching");
+                if(result){
+                    bcrypt.hash(newPassword, 12, (error, hash) =>{
+                        if(error) return userUtil.res(res, 500, "Error during changing password");
+                        if(hash){
+                            let toUpdate = {
+                                'modified_date' : Date.now(),
+                                'password': hash
+                            };
+                            User.updateOne({nickname: nickname}, {$set: toUpdate}).exec().then(() =>{
+                                userUtil.res(res, 201, "Password changed");
+                            }).catch(error =>{
+                                userUtil.res(res, 500, "Cannot change password " + error.toString());
+                            })
+                        }
+                    })
+                }
             })
-            .catch(error => {
-                userUtil.res(res, 500, "Cannot change password");
-            })
+        }
     });
 };
 
